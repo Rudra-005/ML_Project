@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Exam Performance Prediction</title>
+
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f9;
+        }
+
+        .container {
+            width: 420px;
+            margin: 60px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 12px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 12px;
+            background-color: #eaf6ea;
+            border-left: 5px solid #28a745;
+            font-size: 18px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Student Exam Performance</h1>
+
+    <form action="{{ url_for('predict_datapoint') }}" method="post">
+
+        <!-- Gender -->
+        <label>Gender</label>
+        <select name="gender" required>
+            <option disabled selected value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
+        <!-- Race / Ethnicity -->
+        <label>Race / Ethnicity</label>
+        <select name="race_ethnicity" required>
+            <option disabled selected value="">Select Ethnicity</option>
+            <option value="group A">Group A</option>
+            <option value="group B">Group B</option>
+            <option value="group C">Group C</option>
+            <option value="group D">Group D</option>
+            <option value="group E">Group E</option>
+        </select>
+
+        <!-- Parental Education -->
+        <label>Parental Level of Education</label>
+        <select name="parental_level_of_education" required>
+            <option disabled selected value="">Select Education</option>
+            <option value="associate's degree">Associate's degree</option>
+            <option value="bachelor's degree">Bachelor's degree</option>
+            <option value="high school">High school</option>
+            <option value="master's degree">Master's degree</option>
+            <option value="some college">Some college</option>
+            <option value="some high school">Some high school</option>
+        </select>
+
+        <!-- Lunch -->
+        <label>Lunch Type</label>
+        <select name="lunch" required>
+            <option disabled selected value="">Select Lunch</option>
+            <option value="standard">Standard</option>
+            <option value="free/reduced">Free / Reduced</option>
+        </select>
+
+        <!-- Test Preparation -->
+        <label>Test Preparation Course</label>
+        <select name="test_preparation_course" required>
+            <option disabled selected value="">Select Course</option>
+            <option value="none">None</option>
+            <option value="completed">Completed</option>
+        </select>
+
+        <!-- Reading Score -->
+        <label>Reading Score</label>
+        <input type="number" name="reading_score" min="0" max="100" required>
+
+        <!-- Writing Score -->
+        <label>Writing Score</label>
+        <input type="number" name="writing_score" min="0" max="100" required>
+
+        <button type="submit">Predict Math Score</button>
+    </form>
+
+    {% if results %}
+    <div class="result">
+        🎯 Predicted Math Score: <strong>{{ results }}</strong>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>
