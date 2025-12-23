@@ -2,17 +2,15 @@ import os
 import sys
 import dill
 
-
-import numpy as np
-import pandas as pd
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import r2_score
 
 from src.exception import CustomException
 
 
-def save_object(file_path,obj):
+def save_object(file_path, obj):
     try:
         dir_path = os.path.dirname(file_path)
-
         os.makedirs(dir_path, exist_ok=True)
 
         with open(file_path, "wb") as file_obj:
@@ -20,30 +18,32 @@ def save_object(file_path,obj):
 
     except Exception as e:
         raise CustomException(e, sys)
-    
-def evaluate_model(X_train, y_train, X_test, y_test, models):
-    try:
-        from sklearn.metrics import r2_score
 
+
+def evaluate_model(X_train, y_train, X_test, y_test, models, param):
+    try:
         report = {}
 
-        for i in range(len(models)):
-            model = list(models.values())[i]
-            model_name = list(models.keys())[i]
+        for model_name, model in models.items():
+            params_grid = param.get(model_name, {})  # ✅ SAFE ACCESS
 
-            # Train the model
+            if params_grid:
+                gs = GridSearchCV(
+                    estimator=model,
+                    param_grid=params_grid,
+                    cv=3,
+                    n_jobs=-1,
+                )
+                gs.fit(X_train, y_train)
+                model.set_params(**gs.best_params_)
+
             model.fit(X_train, y_train)
-
-            # Predicting the test set results
             y_test_pred = model.predict(X_test)
 
-            # Calculating r2 score
-            test_model_score = r2_score(y_test, y_test_pred)
-
-            report[model_name] = test_model_score
+            score = r2_score(y_test, y_test_pred)
+            report[model_name] = score
 
         return report
 
     except Exception as e:
         raise CustomException(e, sys)
-
